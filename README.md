@@ -1,5 +1,5 @@
 # SOFA Benchmark
-This project focuses on benchmarking and profiling sofa framework with the combination of different serialization and transporter options. The code and the idea behinds it is inspired by [Dubbo Benchmark](https://github.com/apache/dubbo-benchmark).
+This project focuses on benchmarking and profiling sofarpc with the combination of different serialization and transporter options. The code and the idea behinds it is inspired by [Dubbo Benchmark](https://github.com/apache/dubbo-benchmark).
 
 ## How To Run Benchmark
 Clone this project onto your desktop, then

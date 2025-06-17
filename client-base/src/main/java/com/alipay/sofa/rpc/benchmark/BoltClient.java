@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.benchmark;
+package com.alipay.sofa.rpc.benchmark;
 
-import com.alipay.sofa.benchmark.bean.Page;
-import com.alipay.sofa.benchmark.bean.User;
-import com.alipay.sofa.benchmark.rpc.AbstractClient;
-import com.alipay.sofa.benchmark.service.UserService;
-import com.alipay.sofa.benchmark.utils.JMHHelper;
+import com.alipay.sofa.rpc.benchmark.bean.Page;
+import com.alipay.sofa.rpc.benchmark.bean.User;
+import com.alipay.sofa.rpc.benchmark.client.AbstractClient;
+import com.alipay.sofa.rpc.benchmark.service.UserService;
+import com.alipay.sofa.rpc.benchmark.utils.JMHHelper;
 import com.alipay.sofa.common.utils.StringUtil;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import org.openjdk.jmh.annotations.Benchmark;

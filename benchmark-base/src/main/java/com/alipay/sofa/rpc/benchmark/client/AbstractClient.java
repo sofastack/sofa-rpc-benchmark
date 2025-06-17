@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.benchmark.rpc;
+package com.alipay.sofa.rpc.benchmark.client;
 
-import com.alipay.sofa.benchmark.bean.Page;
-import com.alipay.sofa.benchmark.bean.User;
-import com.alipay.sofa.benchmark.service.UserService;
-import com.alipay.sofa.benchmark.service.UserServiceServerImpl;
+import com.alipay.sofa.rpc.benchmark.bean.Page;
+import com.alipay.sofa.rpc.benchmark.bean.User;
+import com.alipay.sofa.rpc.benchmark.service.UserService;
+import com.alipay.sofa.rpc.benchmark.service.UserServiceServerImpl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

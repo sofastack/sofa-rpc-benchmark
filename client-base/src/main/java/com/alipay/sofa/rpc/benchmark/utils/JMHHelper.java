@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.benchmark.utils;
+package com.alipay.sofa.rpc.benchmark.utils;
 
 import com.alipay.sofa.common.utils.StringUtil;
 import org.apache.commons.cli.CommandLine;
