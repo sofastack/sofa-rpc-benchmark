@@ -46,10 +46,10 @@ Clone this project onto your desktop, then
 
 ### Specify warmupIterations, warmupTime , warmupTime and measurementTime for test
 
-* Start the corresponding client, and specify warmupIterations, specify warmupTime, specify warmupTime, specify measurementTime, for example:
+* Start the corresponding client, and specify warmupIterations, specify warmupTime, specify measurementIterations, specify measurementTime, for example:
 
 ```bash
-./benchmark.sh -a "--warmupIterations=3 --warmupTime=10 --warmupTime=3 --measurementTime=150" sofa-rpc-bolt-hessian-client
+./benchmark.sh -a "--warmupIterations=3 --warmupTime=10 --measurementIterations=3 --measurementTime=150" sofa-rpc-bolt-hessian-client
 ```
 
 ### Specify request size for request call and result format for result
