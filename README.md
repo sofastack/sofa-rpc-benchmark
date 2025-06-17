@@ -1,4 +1,4 @@
-# SOFA Benchmark
+# SOFARPC Benchmark
 This project focuses on benchmarking and profiling sofarpc with the combination of different serialization and transporter options. The code and the idea behinds it is inspired by [Dubbo Benchmark](https://github.com/apache/dubbo-benchmark).
 
 ## How To Run Benchmark
