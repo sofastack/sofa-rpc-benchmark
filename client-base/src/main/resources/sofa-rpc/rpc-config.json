@@ -1,0 +1,4 @@
+{
+  "rpc.config.order": 1000,
+  "consumer.connection.num": 2000
+}

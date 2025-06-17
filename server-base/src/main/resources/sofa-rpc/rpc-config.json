@@ -1,0 +1,7 @@
+{
+  "rpc.config.order": 1000,
+  "server.pool.core": 80,
+  "server.pool.max": 400,
+  "server.pool.queue": 100,
+  "server.pool.pre.start": true
+}
