@@ -7,7 +7,8 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 | Module | Protocol | Description |
 |--------|----------|-------------|
 | `sofa-rpc-bolt-hessian-server` / `client` | Bolt + Hessian | JMH benchmark |
-| `sofa-rpc-triple-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `StreamingUserService` (unary + streaming) |
+| `sofa-rpc-triple-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `StreamingUserService` (POJO, unary + streaming) |
+| `sofa-rpc-triple-proto-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `IUserService` (Protobuf, unary + streaming) |
 
 ---
 
@@ -52,6 +53,29 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 # Terminal 2: start client
 # Note: use 127.0.0.1 instead of localhost to avoid IPv6 proxy issues
 ./benchmark.sh -s 127.0.0.1 -p 50051 sofa-rpc-triple-client
+```
+
+---
+
+## Triple Proto Benchmark
+
+`TripleProtoClient` benchmarks all four call modes of `IUserService` using **Protobuf** wire format:
+
+| Benchmark | Call Mode |
+|-----------|-----------|
+| `unary` | Synchronous unary (`getUser`) |
+| `serverStream` | Server streaming (`listUserServerStream`) |
+| `clientStream` | Client streaming (`batchCreateUser`) |
+| `biStream` | Bidirectional streaming (`verifyUserBiStream`) |
+
+### Run Benchmark
+
+```bash
+# Terminal 1: start server (default port 50052)
+./benchmark.sh -p 50052 sofa-rpc-triple-proto-server
+
+# Terminal 2: start client
+./benchmark.sh -s 127.0.0.1 -p 50052 sofa-rpc-triple-proto-client
 ```
 
 ---
