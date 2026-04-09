@@ -16,13 +16,18 @@
  */
 package com.alipay.sofa.rpc.benchmark;
 
-import com.alipay.sofa.rpc.benchmark.bean.User;
-import com.alipay.sofa.rpc.benchmark.service.StreamingUserService;
-import com.alipay.sofa.rpc.benchmark.service.UserServiceServerImpl;
-import com.alipay.sofa.rpc.benchmark.utils.JMHHelper;
 import com.alipay.sofa.common.utils.StringUtil;
+import com.alipay.sofa.rpc.benchmark.proto.BatchCreateResponse;
+import com.alipay.sofa.rpc.benchmark.proto.CreateUserRequest;
+import com.alipay.sofa.rpc.benchmark.proto.GetUserRequest;
+import com.alipay.sofa.rpc.benchmark.proto.GetUserResponse;
+import com.alipay.sofa.rpc.benchmark.proto.ListUserRequest;
+import com.alipay.sofa.rpc.benchmark.proto.SofaUserServiceTriple;
+import com.alipay.sofa.rpc.benchmark.proto.VerifyUserRequest;
+import com.alipay.sofa.rpc.benchmark.proto.VerifyUserResponse;
+import com.alipay.sofa.rpc.benchmark.utils.JMHHelper;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
-import com.alipay.sofa.rpc.transport.SofaStreamObserver;
+import io.grpc.stub.StreamObserver;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -42,41 +47,38 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @State(Scope.Benchmark)
-public class TripleClient {
+public class TripleProtoClient {
 
-    private static final Logger                        LOGGER      = LoggerFactory
-                                                                       .getLogger(TripleClient.class);
+    private static final Logger                                      LOGGER      = LoggerFactory
+                                                                                     .getLogger(TripleProtoClient.class);
 
-    private static int                                 CONCURRENCY = 32;
+    private static int                                               CONCURRENCY = 32;
 
-    private final StreamingUserService                 streamingUserService;
+    private final SofaUserServiceTriple.IUserService                 userService;
 
-    private final ConsumerConfig<StreamingUserService> consumerConfig;
+    private final ConsumerConfig<SofaUserServiceTriple.IUserService> consumerConfig;
 
-    private final UserServiceServerImpl                dataSource  = new UserServiceServerImpl();
+    private final AtomicInteger                                      counter     = new AtomicInteger(0);
 
-    private final AtomicInteger                        counter     = new AtomicInteger(0);
-
-    public TripleClient() {
+    public TripleProtoClient() {
         String host = System.getProperty("server.host", "127.0.0.1");
-        String port = System.getProperty("server.port", "50051");
+        String port = System.getProperty("server.port", "50052");
         String threadNum = System.getProperty("thread.num");
         if (StringUtil.isNotBlank(threadNum)) {
             CONCURRENCY = Integer.parseInt(threadNum);
         }
-        // Bypass system HTTP proxy for local gRPC connections
         String nonProxyHosts = System.getProperty("http.nonProxyHosts", "");
         if (!nonProxyHosts.contains("127.0.0.1")) {
             System.setProperty("http.nonProxyHosts",
                 nonProxyHosts.isEmpty() ? "localhost|127.0.0.1" : nonProxyHosts + "|localhost|127.0.0.1");
         }
-        consumerConfig = new ConsumerConfig<StreamingUserService>()
+        consumerConfig = new ConsumerConfig<SofaUserServiceTriple.IUserService>()
             .setRepeatedReferLimit(10)
-            .setInterfaceId(StreamingUserService.class.getName())
+            .setInterfaceId(SofaUserServiceTriple.IUserService.class.getName())
             .setProtocol("tri")
             .setDirectUrl("tri://" + host + ":" + port)
             .setTimeout(4000);
-        streamingUserService = consumerConfig.refer();
+        userService = consumerConfig.refer();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -95,14 +97,13 @@ public class TripleClient {
     @Benchmark
     @BenchmarkMode({ Mode.Throughput })
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public User unary() {
+    public GetUserResponse unary() {
         long id = counter.getAndIncrement();
-        return streamingUserService.getUser(id);
+        return userService.getUser(GetUserRequest.newBuilder().setId(id).build());
     }
 
     /**
      * Server streaming benchmark: one request, server pushes back a page of users.
-     * Measures end-to-end latency including receiving all streamed responses.
      */
     @Benchmark
     @BenchmarkMode({ Mode.Throughput })
@@ -111,23 +112,25 @@ public class TripleClient {
         int pageNo = counter.getAndIncrement();
         CountDownLatch latch = new CountDownLatch(1);
         final int[] receivedCount = { 0 };
-        streamingUserService.listUserServerStream(pageNo, new SofaStreamObserver<User>() {
-            @Override
-            public void onNext(User user) {
-                receivedCount[0]++;
-            }
+        userService.listUserServerStream(
+            ListUserRequest.newBuilder().setPageNo(pageNo).setPageSize(10).build(),
+            new StreamObserver<GetUserResponse>() {
+                @Override
+                public void onNext(GetUserResponse user) {
+                    receivedCount[0]++;
+                }
 
-            @Override
-            public void onCompleted() {
-                latch.countDown();
-            }
+                @Override
+                public void onCompleted() {
+                    latch.countDown();
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                LOGGER.error("serverStream error", throwable);
-                latch.countDown();
-            }
-        });
+                @Override
+                public void onError(Throwable t) {
+                    LOGGER.error("serverStream error", t);
+                    latch.countDown();
+                }
+            });
         latch.await(4, TimeUnit.SECONDS);
         return receivedCount[0];
     }
@@ -138,14 +141,14 @@ public class TripleClient {
     @Benchmark
     @BenchmarkMode({ Mode.Throughput })
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public String clientStream() throws InterruptedException {
+    public int clientStream() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        final String[] result = { "" };
-        SofaStreamObserver<User> requestObserver = streamingUserService
-            .batchCreateUserClientStream(new SofaStreamObserver<String>() {
+        final int[] result = { 0 };
+        StreamObserver<CreateUserRequest> requestObserver = userService
+            .batchCreateUser(new StreamObserver<BatchCreateResponse>() {
                 @Override
-                public void onNext(String summary) {
-                    result[0] = summary;
+                public void onNext(BatchCreateResponse response) {
+                    result[0] = response.getCount();
                 }
 
                 @Override
@@ -154,13 +157,20 @@ public class TripleClient {
                 }
 
                 @Override
-                public void onError(Throwable throwable) {
-                    LOGGER.error("clientStream error", throwable);
+                public void onError(Throwable t) {
+                    LOGGER.error("clientStream error", t);
                     latch.countDown();
                 }
             });
         for (int i = 0; i < 5; i++) {
-            requestObserver.onNext(dataSource.getUserById(counter.getAndIncrement(), 1));
+            long id = counter.getAndIncrement();
+            requestObserver.onNext(CreateUserRequest.newBuilder()
+                .setId(id)
+                .setName("User-" + id)
+                .setEmail("user" + id + "@example.com")
+                .setMobile("1861234567" + (id % 10))
+                .setAddress("Address-" + id)
+                .build());
         }
         requestObserver.onCompleted();
         latch.await(4, TimeUnit.SECONDS);
@@ -176,10 +186,10 @@ public class TripleClient {
     public int biStream() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         final int[] receivedCount = { 0 };
-        SofaStreamObserver<User> requestObserver = streamingUserService
-            .verifyUserBiStream(new SofaStreamObserver<User>() {
+        StreamObserver<VerifyUserRequest> requestObserver = userService
+            .verifyUserBiStream(new StreamObserver<VerifyUserResponse>() {
                 @Override
-                public void onNext(User user) {
+                public void onNext(VerifyUserResponse response) {
                     receivedCount[0]++;
                 }
 
@@ -189,13 +199,18 @@ public class TripleClient {
                 }
 
                 @Override
-                public void onError(Throwable throwable) {
-                    LOGGER.error("biStream error", throwable);
+                public void onError(Throwable t) {
+                    LOGGER.error("biStream error", t);
                     latch.countDown();
                 }
             });
         for (int i = 0; i < 3; i++) {
-            requestObserver.onNext(dataSource.getUserById(counter.getAndIncrement(), 1));
+            long id = counter.getAndIncrement();
+            requestObserver.onNext(VerifyUserRequest.newBuilder()
+                .setId(id)
+                .setName("User-" + id)
+                .setEmail("user" + id + "@example.com")
+                .build());
         }
         requestObserver.onCompleted();
         latch.await(4, TimeUnit.SECONDS);
@@ -205,7 +220,7 @@ public class TripleClient {
     public static void main(String[] args) throws Exception {
         LOGGER.info(Arrays.toString(args));
         ChainedOptionsBuilder optBuilder = JMHHelper.newBaseChainedOptionsBuilder(args)
-            .include(TripleClient.class.getSimpleName())
+            .include(TripleProtoClient.class.getSimpleName())
             .threads(CONCURRENCY)
             .forks(1);
 

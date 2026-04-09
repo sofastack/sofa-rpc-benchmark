@@ -19,6 +19,9 @@
         <logback.version>1.2.3</logback.version>
         <protobuf.version>3.22.0</protobuf.version>
         <fastjson.version>1.2.83</fastjson.version>
+        <grpc.version>1.53.0</grpc.version>
+        <protoc.version>3.22.0</protoc.version>
+        <sofa.rpc.compiler.version>0.0.3</sofa.rpc.compiler.version>
     </properties>
 
     <modules>
@@ -27,8 +30,10 @@
         <module>server-base</module>
         <module>sofa-rpc-bolt-hessian-server</module>
         <module>sofa-rpc-bolt-hessian-client</module>
-        <module>sofa-rpc-triple-server</module>
-        <module>sofa-rpc-triple-client</module>
+        <module>sofa-rpc-triple-pojo-server</module>
+        <module>sofa-rpc-triple-pojo-client</module>
+        <module>sofa-rpc-triple-proto-server</module>
+        <module>sofa-rpc-triple-proto-client</module>
     </modules>
 
     <dependencies>

@@ -23,10 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class StreamingUserServiceImpl implements StreamingUserService {
+public class UserPojoServiceImpl implements UserPojoService {
 
     private static final Logger         LOGGER      = LoggerFactory
-                                                        .getLogger(StreamingUserServiceImpl.class);
+                                                        .getLogger(UserPojoServiceImpl.class);
 
     private final UserServiceServerImpl userService = new UserServiceServerImpl();
 

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sofa-rpc-triple-server</artifactId>
+    <artifactId>sofa-rpc-triple-pojo-server</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.alipay.sofa.rpc.benchmark.TripleServer</mainClass>
+                            <mainClass>com.alipay.sofa.rpc.benchmark.TriplePojoServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
