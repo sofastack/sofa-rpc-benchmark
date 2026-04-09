@@ -20,8 +20,12 @@ import com.alipay.sofa.rpc.benchmark.service.UserService;
 import com.alipay.sofa.rpc.benchmark.service.UserServiceServerImpl;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.config.ServerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BoltServer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoltServer.class);
 
     public static void main(String[] args) {
         String port = System.getProperty("server.port", "12200");
@@ -37,5 +41,9 @@ public class BoltServer {
             .setServer(serverConfig);
 
         providerConfig.export();
+
+        LOGGER.info("Triple pojo server started on port {}", port);
+        LOGGER.info("Service: {}", UserService.class.getName());
+
     }
 }
