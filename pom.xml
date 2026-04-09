@@ -13,10 +13,12 @@
         <java.source>1.8</java.source>
         <java.target>1.8</java.target>
         <jmh.version>1.29</jmh.version>
-        <sofa.rpc.open.version>5.13.5</sofa.rpc.open.version>
+        <sofa.rpc.open.version>5.14.2</sofa.rpc.open.version>
         <cli.version>1.4</cli.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
+        <protobuf.version>3.22.0</protobuf.version>
+        <fastjson.version>1.2.83</fastjson.version>
     </properties>
 
     <modules>
@@ -25,6 +27,8 @@
         <module>server-base</module>
         <module>sofa-rpc-bolt-hessian-server</module>
         <module>sofa-rpc-bolt-hessian-client</module>
+        <module>sofa-rpc-triple-server</module>
+        <module>sofa-rpc-triple-client</module>
     </modules>
 
     <dependencies>
@@ -101,6 +105,25 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>30.0-jre</version>
+            </dependency>
+            <!-- fastjson is required by Triple's ClientHeaderClientInterceptor at runtime -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <!-- Force protobuf-java to 3.22+ so LazyStringArrayList.emptyList() is available.
+                 sofa-rpc-all 5.13.5 ships triple/Request.class compiled against 3.22,
+                 but its transitive dependency resolves to 3.21.7, causing IllegalAccessError. -->
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
+                <version>${protobuf.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
