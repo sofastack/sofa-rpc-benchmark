@@ -30,8 +30,8 @@
         <module>server-base</module>
         <module>sofa-rpc-bolt-hessian-server</module>
         <module>sofa-rpc-bolt-hessian-client</module>
-        <module>sofa-rpc-triple-server</module>
-        <module>sofa-rpc-triple-client</module>
+        <module>sofa-rpc-triple-pojo-server</module>
+        <module>sofa-rpc-triple-pojo-client</module>
         <module>sofa-rpc-triple-proto-server</module>
         <module>sofa-rpc-triple-proto-client</module>
     </modules>

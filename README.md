@@ -7,7 +7,7 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 | Module | Protocol | Description |
 |--------|----------|-------------|
 | `sofa-rpc-bolt-hessian-server` / `client` | Bolt + Hessian | JMH benchmark |
-| `sofa-rpc-triple-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `StreamingUserService` (POJO, unary + streaming) |
+| `sofa-rpc-triple-pojo-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `UserPojoService` (POJO, unary + streaming) |
 | `sofa-rpc-triple-proto-server` / `client` | Triple (HTTP/2) | JMH benchmark, tests `IUserService` (Protobuf, unary + streaming) |
 
 ---
@@ -35,7 +35,7 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 
 ## Triple Benchmark
 
-`TripleClient` benchmarks all four call modes of `StreamingUserService`:
+`TripleClient` benchmarks all four call modes of `UserPojoService`:
 
 | Benchmark | Call Mode |
 |-----------|-----------|
@@ -48,11 +48,11 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 
 ```bash
 # Terminal 1: start server (default port 50051)
-./benchmark.sh -p 50051 sofa-rpc-triple-server
+./benchmark.sh -p 50051 sofa-rpc-triple-pojo-server
 
 # Terminal 2: start client
 # Note: use 127.0.0.1 instead of localhost to avoid IPv6 proxy issues
-./benchmark.sh -s 127.0.0.1 -p 50051 sofa-rpc-triple-client
+./benchmark.sh -s 127.0.0.1 -p 50051 sofa-rpc-triple-pojo-client
 ```
 
 ---

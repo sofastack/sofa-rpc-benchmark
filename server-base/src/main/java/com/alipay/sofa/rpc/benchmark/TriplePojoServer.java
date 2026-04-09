@@ -16,12 +16,12 @@
  */
 package com.alipay.sofa.rpc.benchmark;
 
-import com.alipay.sofa.rpc.benchmark.service.StreamingUserService;
-import com.alipay.sofa.rpc.benchmark.service.StreamingUserServiceImpl;
+import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
+import com.alipay.sofa.rpc.benchmark.service.UserPojoServiceImpl;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.config.ServerConfig;
 
-public class TripleServer {
+public class TriplePojoServer {
 
     public static void main(String[] args) {
         String port = System.getProperty("server.port", "50051");
@@ -31,9 +31,9 @@ public class TripleServer {
             .setPort(Integer.parseInt(port))
             .setDaemon(false);
 
-        ProviderConfig<StreamingUserService> providerConfig = new ProviderConfig<StreamingUserService>()
-            .setInterfaceId(StreamingUserService.class.getName())
-            .setRef(new StreamingUserServiceImpl())
+        ProviderConfig<UserPojoService> providerConfig = new ProviderConfig<UserPojoService>()
+            .setInterfaceId(UserPojoService.class.getName())
+            .setRef(new UserPojoServiceImpl())
             .setServer(serverConfig);
 
         providerConfig.export();

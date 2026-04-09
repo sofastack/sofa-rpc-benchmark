@@ -17,7 +17,7 @@
 package com.alipay.sofa.rpc.benchmark;
 
 import com.alipay.sofa.rpc.benchmark.bean.User;
-import com.alipay.sofa.rpc.benchmark.service.StreamingUserService;
+import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
 import com.alipay.sofa.rpc.benchmark.service.UserServiceServerImpl;
 import com.alipay.sofa.rpc.benchmark.utils.JMHHelper;
 import com.alipay.sofa.common.utils.StringUtil;
@@ -42,22 +42,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @State(Scope.Benchmark)
-public class TripleClient {
+public class TriplePojoClient {
 
-    private static final Logger                        LOGGER      = LoggerFactory
-                                                                       .getLogger(TripleClient.class);
+    private static final Logger                   LOGGER      = LoggerFactory
+                                                                  .getLogger(TriplePojoClient.class);
 
-    private static int                                 CONCURRENCY = 32;
+    private static int                            CONCURRENCY = 32;
 
-    private final StreamingUserService                 streamingUserService;
+    private final UserPojoService                 userPojoService;
 
-    private final ConsumerConfig<StreamingUserService> consumerConfig;
+    private final ConsumerConfig<UserPojoService> consumerConfig;
 
-    private final UserServiceServerImpl                dataSource  = new UserServiceServerImpl();
+    private final UserServiceServerImpl           dataSource  = new UserServiceServerImpl();
 
-    private final AtomicInteger                        counter     = new AtomicInteger(0);
+    private final AtomicInteger                   counter     = new AtomicInteger(0);
 
-    public TripleClient() {
+    public TriplePojoClient() {
         String host = System.getProperty("server.host", "127.0.0.1");
         String port = System.getProperty("server.port", "50051");
         String threadNum = System.getProperty("thread.num");
@@ -70,13 +70,13 @@ public class TripleClient {
             System.setProperty("http.nonProxyHosts",
                 nonProxyHosts.isEmpty() ? "localhost|127.0.0.1" : nonProxyHosts + "|localhost|127.0.0.1");
         }
-        consumerConfig = new ConsumerConfig<StreamingUserService>()
+        consumerConfig = new ConsumerConfig<UserPojoService>()
             .setRepeatedReferLimit(10)
-            .setInterfaceId(StreamingUserService.class.getName())
+            .setInterfaceId(UserPojoService.class.getName())
             .setProtocol("tri")
             .setDirectUrl("tri://" + host + ":" + port)
             .setTimeout(4000);
-        streamingUserService = consumerConfig.refer();
+        userPojoService = consumerConfig.refer();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -97,7 +97,7 @@ public class TripleClient {
     @OutputTimeUnit(TimeUnit.SECONDS)
     public User unary() {
         long id = counter.getAndIncrement();
-        return streamingUserService.getUser(id);
+        return userPojoService.getUser(id);
     }
 
     /**
@@ -111,7 +111,7 @@ public class TripleClient {
         int pageNo = counter.getAndIncrement();
         CountDownLatch latch = new CountDownLatch(1);
         final int[] receivedCount = { 0 };
-        streamingUserService.listUserServerStream(pageNo, new SofaStreamObserver<User>() {
+        userPojoService.listUserServerStream(pageNo, new SofaStreamObserver<User>() {
             @Override
             public void onNext(User user) {
                 receivedCount[0]++;
@@ -141,7 +141,7 @@ public class TripleClient {
     public String clientStream() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         final String[] result = { "" };
-        SofaStreamObserver<User> requestObserver = streamingUserService
+        SofaStreamObserver<User> requestObserver = userPojoService
             .batchCreateUserClientStream(new SofaStreamObserver<String>() {
                 @Override
                 public void onNext(String summary) {
@@ -176,7 +176,7 @@ public class TripleClient {
     public int biStream() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         final int[] receivedCount = { 0 };
-        SofaStreamObserver<User> requestObserver = streamingUserService
+        SofaStreamObserver<User> requestObserver = userPojoService
             .verifyUserBiStream(new SofaStreamObserver<User>() {
                 @Override
                 public void onNext(User user) {
@@ -205,7 +205,7 @@ public class TripleClient {
     public static void main(String[] args) throws Exception {
         LOGGER.info(Arrays.toString(args));
         ChainedOptionsBuilder optBuilder = JMHHelper.newBaseChainedOptionsBuilder(args)
-            .include(TripleClient.class.getSimpleName())
+            .include(TriplePojoClient.class.getSimpleName())
             .threads(CONCURRENCY)
             .forks(1);
 

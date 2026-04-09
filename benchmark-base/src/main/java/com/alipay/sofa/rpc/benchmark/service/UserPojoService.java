@@ -27,7 +27,7 @@ import com.alipay.sofa.rpc.transport.SofaStreamObserver;
  * - Client Streaming: client sends a stream, server responds with one response
  * - Bidirectional Streaming: both sides stream messages
  */
-public interface StreamingUserService {
+public interface UserPojoService {
 
     /**
      * Server Streaming: query users by page, server pushes each user one by one.
