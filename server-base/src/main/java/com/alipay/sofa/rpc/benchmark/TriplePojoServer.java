@@ -20,8 +20,12 @@ import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
 import com.alipay.sofa.rpc.benchmark.service.UserPojoServiceImpl;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.config.ServerConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TriplePojoServer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TriplePojoServer.class);
 
     public static void main(String[] args) {
         String port = System.getProperty("server.port", "50051");
@@ -37,5 +41,8 @@ public class TriplePojoServer {
             .setServer(serverConfig);
 
         providerConfig.export();
+
+        LOGGER.info("Triple pojo server started on port {}", port);
+        LOGGER.info("Service: {}", UserPojoService.class.getName());
     }
 }
