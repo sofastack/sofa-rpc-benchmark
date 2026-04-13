@@ -31,12 +31,10 @@ public class TriplePojoServer {
 
     public static void main(String[] args) {
         String port = System.getProperty("server.port", "50051");
-        String serialization = System.getProperty("server.serialization", RpcConstants.SERIALIZE_HESSIAN2);
 
         ServerConfig serverConfig = new ServerConfig()
             .setProtocol("tri")
             .setPort(Integer.parseInt(port))
-            .setSerialization(serialization)
             .setDaemon(false);
 
         ProviderConfig<UserPojoService> providerConfig = new ProviderConfig<UserPojoService>()
