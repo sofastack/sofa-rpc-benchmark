@@ -18,10 +18,8 @@ package com.alipay.sofa.rpc.benchmark;
 
 import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
 import com.alipay.sofa.rpc.benchmark.service.UserPojoServiceImpl;
-import com.alipay.sofa.rpc.common.RpcConstants;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.config.ServerConfig;
-import com.caucho.hessian.io.Hessian2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

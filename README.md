@@ -62,7 +62,6 @@ Triple Pojo supports configurable serialization via `-S` (default: `hessian2`).
 
 ```bash
 # Use JSON serialization
-./benchmark.sh -p 50051 -S json sofa-rpc-triple-pojo-server
 ./benchmark.sh -s 127.0.0.1 -p 50051 -S json sofa-rpc-triple-pojo-client
 ```
 
