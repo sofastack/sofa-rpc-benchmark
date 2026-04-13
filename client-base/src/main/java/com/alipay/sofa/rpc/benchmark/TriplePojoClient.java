@@ -21,6 +21,7 @@ import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
 import com.alipay.sofa.rpc.benchmark.service.UserServiceServerImpl;
 import com.alipay.sofa.rpc.benchmark.utils.JMHHelper;
 import com.alipay.sofa.common.utils.StringUtil;
+import com.alipay.sofa.rpc.common.RpcConstants;
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import com.alipay.sofa.rpc.transport.SofaStreamObserver;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -60,6 +61,7 @@ public class TriplePojoClient {
     public TriplePojoClient() {
         String host = System.getProperty("server.host", "127.0.0.1");
         String port = System.getProperty("server.port", "50051");
+        String serialization = System.getProperty("server.serialization", RpcConstants.SERIALIZE_HESSIAN2);
         String threadNum = System.getProperty("thread.num");
         if (StringUtil.isNotBlank(threadNum)) {
             CONCURRENCY = Integer.parseInt(threadNum);
@@ -74,6 +76,7 @@ public class TriplePojoClient {
             .setRepeatedReferLimit(10)
             .setInterfaceId(UserPojoService.class.getName())
             .setProtocol("tri")
+            .setSerialization(serialization)
             .setDirectUrl("tri://" + host + ":" + port)
             .setTimeout(4000);
         userPojoService = consumerConfig.refer();
