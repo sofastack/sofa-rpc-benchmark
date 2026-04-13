@@ -8,6 +8,7 @@ usage() {
     echo "         -p port, port number"
     echo "         -f output file path"
     echo "         -t client thread nums"
+    echo "         -S serialization type (e.g. hessian2, protobuf, json)"
     echo "         -e other system property"
     echo "         -a other args"
     echo "dirname: test module name"
@@ -33,7 +34,7 @@ run() {
         JAR=`find ${PROJECT_DIR}/target/*.jar | head -n 1`
         echo
         echo "RUN ${PROJECT_DIR} IN ${MODE:-benchmark} MODE"
-        CMD="java ${JAVA_OPTIONS} -Dserver.host=${SERVER} -Dserver.port=${PORT} -Dbenchmark.output=${OUTPUT} -Dthread.num=${THREADNUM} ${SYSTEM_PROPS} -jar ${JAR} ${OTHERARGS}"
+        CMD="java ${JAVA_OPTIONS} -Dserver.host=${SERVER} -Dserver.port=${PORT} -Dserver.serialization=${SERIALIZATION} -Dbenchmark.output=${OUTPUT} -Dthread.num=${THREADNUM} ${SYSTEM_PROPS} -jar ${JAR} ${OTHERARGS}"
         echo "command is: ${CMD}"
         echo
         ${CMD}
@@ -48,9 +49,10 @@ OUTPUT=""
 OPTIND=1
 OTHERARGS=""
 THREADNUM=""
+SERIALIZATION=""
 SYSTEM_PROPS=""
 
-while getopts "m:s:p:f:t:e:a:" opt; do
+while getopts "m:s:p:f:t:S:e:a:" opt; do
     case "$opt" in
         m)
             MODE=${OPTARG}
@@ -66,6 +68,9 @@ while getopts "m:s:p:f:t:e:a:" opt; do
             ;;
         t)
             THREADNUM=${OPTARG}
+            ;;
+        S)
+            SERIALIZATION=${OPTARG}
             ;;
         e)
             SYSTEM_PROPS=${OPTARG}

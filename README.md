@@ -55,6 +55,17 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 ./benchmark.sh -s 127.0.0.1 -p 50051 sofa-rpc-triple-pojo-client
 ```
 
+### Specify Serialization
+
+Triple Pojo supports configurable serialization via `-S` (default: `hessian2`).
+**Both server and client must use the same serialization type.**
+
+```bash
+# Use JSON serialization
+./benchmark.sh -p 50051 -S json sofa-rpc-triple-pojo-server
+./benchmark.sh -s 127.0.0.1 -p 50051 -S json sofa-rpc-triple-pojo-client
+```
+
 ---
 
 ## Triple Proto Benchmark
@@ -81,6 +92,17 @@ This project focuses on benchmarking and profiling SOFARPC with different protoc
 ---
 
 ## Common Parameters
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-m` | Benchmark mode (`benchmark` or `profiling`) | `-m profiling` |
+| `-s` | Server hostname | `-s 127.0.0.1` |
+| `-p` | Server port | `-p 50051` |
+| `-f` | Output file path | `-f result.json` |
+| `-t` | Client thread count | `-t 64` |
+| `-S` | Serialization type (e.g. `hessian2`, `protobuf`, `json`) | `-S json` |
+| `-e` | Extra system properties | `-e "-Drequest.size=10240"` |
+| `-a` | Extra JMH args | `-a "--warmupIterations=3"` |
 
 ### Specify port, host, output file, thread count
 

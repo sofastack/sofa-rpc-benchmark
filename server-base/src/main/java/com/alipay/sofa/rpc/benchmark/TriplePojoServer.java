@@ -18,8 +18,10 @@ package com.alipay.sofa.rpc.benchmark;
 
 import com.alipay.sofa.rpc.benchmark.service.UserPojoService;
 import com.alipay.sofa.rpc.benchmark.service.UserPojoServiceImpl;
+import com.alipay.sofa.rpc.common.RpcConstants;
 import com.alipay.sofa.rpc.config.ProviderConfig;
 import com.alipay.sofa.rpc.config.ServerConfig;
+import com.caucho.hessian.io.Hessian2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +31,12 @@ public class TriplePojoServer {
 
     public static void main(String[] args) {
         String port = System.getProperty("server.port", "50051");
+        String serialization = System.getProperty("server.serialization", RpcConstants.SERIALIZE_HESSIAN2);
 
         ServerConfig serverConfig = new ServerConfig()
             .setProtocol("tri")
             .setPort(Integer.parseInt(port))
+            .setSerialization(serialization)
             .setDaemon(false);
 
         ProviderConfig<UserPojoService> providerConfig = new ProviderConfig<UserPojoService>()
